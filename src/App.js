@@ -1,48 +1,64 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import Todo from './components/todo'
 import "./style.css";
-import Tarea from './components/tarea'
 
-export default class App extends Component{
+
+let id = 0;
+
+export default class TodoApp extends Component{
 
   constructor(){
     super();
+
     this.state = {
-      tareas:[
-        {
-          titulo: "Tarea Nº 1",
-          checked: false
-        },
-        {
-          titulo: "Tarea Nº 2",
-          checked: false
-        }
-      ]
+      tareas:[]
     }
   }
 
+
+  /**
+   * Render principal
+   */
   render(){
-    console.log(this.state.tareas)
     return (
       <div>
-        
-        <ul class="list_tareas">
+        <h1> TodoApp</h1>
+        <div> Cantidad tareas: {this.state.tareas.length}</div>
+        <div>
+          Tareas por hacer: {
+            // Array filter
+            this.state.tareas.filter(tarea => (tarea.checked == false)).length
+          }
+        </div>
+        <button onClick={ () => ( this.addTodo() ) }> Agregar tarea</button>
+        <ul>
           {
-            this.state.tareas.map(item => {
-              // Estoy recorriendo el array de tarea para devolver el componente Tarea
-              return (
-                <Tarea tarea={item} />
-              )
-            })
+            this.state.tareas.map(todo => (
+              <Todo 
+                tarea={todo} 
+                // Paso un prop al componente Todo, para que se active del lado del checkbox
+                onToggle={ () => this.toggleTodo(todo.id)} 
+
+                // Paso un prop al componente Todo, para que se active del lado del boton borrar
+                onDelete={ () => this.removeTodo(todo.id)}
+              />
+            ))
           }
         </ul>
-        <button onClick={() => (this.agregarTarea())}>Agregar Tarea</button>
+        
       </div>
     )
   }
 
-  agregarTarea(){
+  /**
+   * Agrego Tarea
+   */
+  addTodo(){
+    const titulo = prompt("Que tarea queres agregar?");
+
     const nuevaTarea = {
-      titulo: `Tarea Nº ${this.state.tareas.length + 1}`,
+      id: id++,
+      titulo: titulo,
       checked: false
     }
 
@@ -52,10 +68,37 @@ export default class App extends Component{
         nuevaTarea
       ]
     })
+  }
+
+  //Callback toggleTodo: actualizo el estado de la tarea con !checked
+  toggleTodo(id){
+    console.log("Aqui se supone que cambio la tarea ID: ", id)
+
+    this.setState({
+      tareas: this.state.tareas.map(tarea => {
+        if (tarea.id !== id) return tarea
+
+        return {
+          id: tarea.id,
+          titulo: tarea.titulo,
+          // Cambio valor del booleano checked
+          checked: !tarea.checked
+        }
+      })
+    })
 
   }
 
+  //Callback removeTodo: actualizo el estado de la tarea filtrando las tareas con respecto al ID pasado por parametro.
+  removeTodo(id){
+    console.log("Aqui elimino la tarea ID: ", id)
 
-
+    this.setState({
+      // Hago un filter de las tareas y retorno toda tarea cuto id sea distinto al bsucado
+      tareas: this.state.tareas.filter(tarea => {
+        return (tarea.id !== id)
+      })
+    })
+  }
 
 }

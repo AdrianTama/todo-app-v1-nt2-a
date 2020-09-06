@@ -1,3 +1,15 @@
 h1, p {
-  font-family: Lato;
+    font-family: Lato;
+    background: black;
+    text-align: center;
+    color: lightgray;
+  }
+
+div{
+    background: lightblue;
+
+}
+
+button{
+  background:cornflowerblue;
 }
